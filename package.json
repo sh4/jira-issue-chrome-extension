@@ -1,0 +1,17 @@
+{
+  "name": "jira-issue-chrome-extension",
+  "version": "0.1.0",
+  "description": "JIRA issue create helper chrome extension",
+  "main": "src/main.js",
+  "dependencies": {
+    "crx": "^3.0.3",
+    "typescript": "^1.8.10",
+    "typings": "^1.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}

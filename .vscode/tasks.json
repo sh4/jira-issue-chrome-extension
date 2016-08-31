@@ -1,0 +1,32 @@
+{
+    "version": "0.1.0",
+    "isShellCommand": true,
+    "windows": {
+        "command": "cmd.exe"
+    },
+    "args": [
+        "/C"
+    ],
+    "tasks": [
+        {
+            "taskName": "watch",
+            "args": [
+                "${env.AppData}\\Roaming\\npm\\tsc.cmd",
+                "-w"
+            ],
+            "isWatching": true,
+            "suppressTaskName": true,
+            "problemMatcher": "$tsc"
+        },
+        {
+            "taskName": "build",
+            "isBuildCommand": true,
+            "args": [
+                "${workspaceRoot}\\node_modules\\.bin\\crx.cmd",
+                "pack",
+                "${workspaceRoot}\\src"
+            ],
+            "suppressTaskName": true
+        }
+    ]
+}

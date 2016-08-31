@@ -1,0 +1,11 @@
+{
+    "exclude": [
+        
+    ],
+    "compilerOptions": {
+        
+    },
+    "files": [
+        "typings/index.d.ts"
+    ]
+}
