@@ -16,6 +16,17 @@
         "persistent": false
     },
 
+    "content_scripts": [
+        {
+            "matches": ["http://*/jira/browse/*"],
+            "js": ["content.js"]
+        },
+        {
+            "matches": ["http://*/jira/secure/CreateIssueDetails*"],
+            "js": ["create-issue.js"]
+        }
+    ],
+
     "icons": {
     }
 }
