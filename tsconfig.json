@@ -3,9 +3,15 @@
         
     ],
     "compilerOptions": {
-        
+        "target": "es6"  
     },
     "files": [
-        "typings/index.d.ts"
+        "typings/index.d.ts",
+        "src/content/browseIssue.ts",
+        "src/content/createIssueForm.ts",
+        "src/lib/options.ts",
+        "src/lib/jira.ts",
+        "src/options.ts",
+        "src/main.ts"
     ]
 }

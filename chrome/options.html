@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>JIRA Issue Helper Options</title>
+    <style type="text/css">
+    body {
+        font-family: arial;
+    }
+    label, textarea, input {
+        display: block;
+        width: 100%;
+        margin: 0.5em;
+    }
+    fieldset > div + div {
+        margin-top: 1.5em;
+    }
+    .required-item {
+        display: display-inline;
+        margin-right: 0.5em;
+        font-weight: bold;
+        color: red;
+    }
+    </style>
+</head>
+<body>
+
+<div>
+    <span class="required-item">*</span> Required item
+</div>
+
+<h1>Service</h1>
+
+<fieldset>
+    <div>
+        <label for="jiraUrl"><span class="required-item">*</span>JIRA URL</label>
+        <input class="option-value" id="jiraUrl" type="text">
+    </div>
+
+    <div>
+        <label for="jiraProject"><span class="required-item">*</span>JIRA Project</label>
+        <input class="option-value" id="jiraProject" type="text">
+    </div>
+
+    <div>
+        <label for="stashUrl"><span class="required-item">*</span>Stash URL</label>
+        <input class="option-value" id="stashUrl" type="text">
+    </div>
+
+    <div>
+        <label for="stashProject"><span class="required-item">*</span>Stash Project</label>
+        <input class="option-value" id="stashProject" type="text">
+    </div>
+
+    <div>
+        <label for="stashRepository"><span class="required-item">*</span>Stash Repository</label>
+        <input class="option-value" id="stashRepository" type="text">
+    </div>
+</fieldset>
+
+<h1>JIRA Issue</h1>
+
+<h2>Form Values</h2>
+
+<fieldset>
+    <div>
+        <label for="jiraIssueType"><span class="required-item">*</span>Default Issue Type</label>
+        <select class="option-value" id="jiraIssueType"></select>
+    </div>
+
+    <div>
+        <label for="jiraIssueSummary">Default Summary</label>
+        <input class="option-value" id="jiraIssueSummary" type="text">
+    </div>
+
+    <div>
+        <label for="jiraIssueDescription">Default Description</label>
+        <textarea class="option-value" id="jiraIssueDescription"></textarea>
+    </div>
+
+    <div>
+        <label for="jiraIssueBranchName">Default Stash Branch Name</label>
+        <input class="option-value" id="jiraIssueBranchName" type="text">
+    </div>
+</fieldset>
+
+<h2>Predefinition Macros</h2>
+
+<table>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Summary</th>
+        <th>Remarks</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>$(JIRA-KEY)</td>
+        <td>Created JIRA issue key.</td>
+        <td>Only use <strong>Default Stash Branch Name</strong></td>
+    </tr>
+    <tr>
+        <td>$(SELECTED-TEXT)</td>
+        <td>User selected text on this extension.</td>
+        <td></td>
+    </tr>
+</body>
+</table>
+
+<p>
+    <button id="save">Save</button>
+    <div id="status"></div>
+</p>
+
+<script src="options.js"></script>
+
+</body>
+</html>

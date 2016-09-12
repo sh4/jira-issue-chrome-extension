@@ -6,9 +6,15 @@
   "dependencies": {
     "crx": "^3.0.3",
     "typescript": "^1.8.10",
-    "typings": "^1.3.3"
+    "typings": "^1.3.3",
+    "webpack": "^1.13.2",
+    "whatwg-fetch": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

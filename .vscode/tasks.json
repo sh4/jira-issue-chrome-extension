@@ -11,7 +11,7 @@
         {
             "taskName": "watch",
             "args": [
-                "${env.AppData}\\Roaming\\npm\\tsc.cmd",
+                "${env.APPDATA}\\npm\\tsc.cmd",
                 "-w"
             ],
             "isWatching": true,
@@ -24,7 +24,7 @@
             "args": [
                 "${workspaceRoot}\\node_modules\\.bin\\crx.cmd",
                 "pack",
-                "${workspaceRoot}\\src"
+                "${workspaceRoot}\\chrome"
             ],
             "suppressTaskName": true
         }
