@@ -9,6 +9,7 @@ export class Options {
     jiraIssueSummary: string = "$(SELECTED-TEXT)";
     jiraIssueDescription: string = null;
     jiraIssueBranchName: string = "feature/$(JIRA-KEY)-";
+    jiraIssueStartPointBranchName: string = "develop";
 
     constructor() {
     }

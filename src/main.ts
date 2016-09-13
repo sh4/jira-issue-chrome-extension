@@ -1,5 +1,6 @@
 import * as options from "./lib/options"
 import * as jira from "./lib/jira"
+import * as stash from "./lib/stash"
 
 chrome.contextMenus.create({
     title: "Create JIRA Issue",
@@ -34,7 +35,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             const opts = r.options;
             const user = results[1];
             
-            const selectionText = info.selectionText;
+            const selectionText = info.selectionText || "";
             const macroVars: { [key: string]:string } = {
                 "SELECTED-TEXT": selectionText,
             };
@@ -48,12 +49,42 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 reporter: user.name,
                 assignee: user.name,
             });
-            chrome.windows.create({
+            //chrome.windows.create({
+            //    url: issueUrl,
+            //    type: "normal",
+            //}, (window) => {
+            //  const issueTabId = window.tabs[0].id
+            chrome.tabs.create({
                 url: issueUrl,
-                type: "popup",
-            }, (window) => {
-                const issueTabId = window.tabs[0].id;
+            }, (tab) => {
+                const issueTabId = tab.id;
                 const sessionId = `session_${(+new Date()).toString(16)}`;
+                const onceMessageListener = (msg, sender, res) => {
+                    if (!msg) {
+                        return;
+                    }
+                    if (msg.sessionId !== sessionId) {
+                        return;
+                    }
+                    chrome.runtime.onMessage.removeListener(onceMessageListener);
+                    const branchName = opts.expandMacro(msg.branchName, {
+                        "SELECTED-TEXT": selectionText,
+                        "JIRA-KEY": msg.jiraIssueKey || "",
+                    }) || "";
+                    const startPointBranchName = opts.jiraIssueStartPointBranchName || "";
+                    debugger;
+                    if (branchName === "" || startPointBranchName === "") {
+                        return;
+                    }
+                    const stashAPI = new stash.Stash(opts.stashUrl);
+                    return stashAPI
+                        .createBranch(opts.stashProject, opts.stashRepository, branchName, startPointBranchName)
+                        .then(r => {
+                            res(r);
+                        }, err => {
+                            res({ error: err });
+                        });
+                };
                 const listener = (tabId, info) => {
                     if (tabId !== issueTabId || info.status !== "complete") {
                         return;
@@ -63,6 +94,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                             // 課題作成後の画面
                             chrome.storage.local.remove(sessionId);
                             chrome.tabs.onUpdated.removeListener(listener);
+                            chrome.runtime.onMessage.addListener(onceMessageListener);
                             chrome.tabs.sendMessage(tabId, sessions[sessionId]);
                         } else {
                             // 課題新規作成の画面

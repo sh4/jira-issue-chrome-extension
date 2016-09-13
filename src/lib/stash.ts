@@ -5,24 +5,34 @@ export class Stash {
         this.url = url.substr(-1, 1) !== '/' ? url + "/"  : url;
     }
 
-    createBranch(project: string, repository: string, branchName: string, startPoint: string = "develop") {
+    createBranch(project: string, repository: string, branchName: string, startPoint: string) {
         const branchesUrl = `${this.url}rest/branch-utils/1.0/projects/${project}/repos/${repository}/branches`;
-        const data = new FormData();
-        data.append("json", JSON.stringify({
+        const json = JSON.stringify({
             name: branchName,
             startPoint: `refs/heads/${startPoint}`,
-        }));
-        return fetch(branchesUrl, {
-            method: "POST", 
-            credentials: "include",
-            body: data,
-        })
-        .then(r => r.json())
-        .then(json => {
-            if (json.errors) {
-                throw new Error(json.errors.map(e => e.message).join("\r\n"));
-            }
-            return json;
+        });
+
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", branchesUrl, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("X-Atlassian-Token", "no-check");
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    var res = xhr.responseText || "";
+                    if (xhr.getResponseHeader("Content-Type") === "application/json") {
+                        res = JSON.parse(res);
+                    }
+                    if (xhr.status >= 400) {
+                        reject(res);
+                    } else {
+                        resolve(res);
+                    }
+                }
+            };
+            xhr.withCredentials = true;
+            xhr.send(json);
         });
     }
 }

@@ -1,5 +1,7 @@
-import * as options from "./lib/options";
-import * as stash from "./lib/stash";
+import * as options from "../lib/options";
+import * as stash from "../lib/stash";
+
+declare var AJS:any;
 
 chrome.runtime.onMessage.addListener( (msg, sender, response) => {
     if (!msg) {
@@ -13,18 +15,31 @@ chrome.runtime.onMessage.addListener( (msg, sender, response) => {
         return;
     }
     var jiraIssueKey = issueKeyMeta.getAttribute("content");
-    options.Options.get(chrome.storage.local)
-        .then(opts => {
-            const branchName = opts.expandMacro(msg.branchName, {
-                "SELECTED-TEXT": msg.selectionText || "",
-                "JIRA-KEY": jiraIssueKey || "",
+
+    chrome.runtime.sendMessage({
+        sessionId: msg.sessionId,
+        branchName: msg.branchName,
+        jiraIssueKey: jiraIssueKey,
+    }, (r) => {
+        r || (r = {});
+        if (r.error) {
+            if (r.error.message) {
+                alert(r.error.message);
+            }
+            return;
+        }
+        console.log(r);
+        /*
+        if (AJS.flag) {
+            AJS.flag({
+                type: "info",
+                title: "ブランチを作成しました。",
+                body: "hoge"
             });
-            const stashAPI = new stash.Stash(opts.stashUrl);
-            return stashAPI.createBranch(opts.stashProject, opts.stashRepository, branchName);
-        })
-        .then(b => {
+        } else {
             // ブランチつくった
-            console.log(b);
-        });
+        }
+        */
+    });  
 });
 

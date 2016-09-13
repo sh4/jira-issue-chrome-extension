@@ -8,9 +8,9 @@ chrome.runtime.onMessage.addListener( (msg, sender, response) => {
 
     const session = {};
     session[msg.sessionId] = {
+        sessionId: msg.sessionId,
         createNewIssue: true,
         branchName: msg.branchName || "",
-        selectionText: msg.selectionText || "",
     };
     chrome.storage.local.set(session);
     
