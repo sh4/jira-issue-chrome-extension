@@ -49,11 +49,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 reporter: user.name,
                 assignee: user.name,
             });
-            //chrome.windows.create({
-            //    url: issueUrl,
-            //    type: "normal",
-            //}, (window) => {
-            //  const issueTabId = window.tabs[0].id
             chrome.tabs.create({
                 url: issueUrl,
             }, (tab) => {
@@ -72,18 +67,18 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                         "JIRA-KEY": msg.jiraIssueKey || "",
                     }) || "";
                     const startPointBranchName = opts.jiraIssueStartPointBranchName || "";
-                    debugger;
                     if (branchName === "" || startPointBranchName === "") {
                         return;
                     }
                     const stashAPI = new stash.Stash(opts.stashUrl);
-                    return stashAPI
+                    stashAPI
                         .createBranch(opts.stashProject, opts.stashRepository, branchName, startPointBranchName)
                         .then(r => {
                             res(r);
                         }, err => {
                             res({ error: err });
                         });
+                    return true;
                 };
                 const listener = (tabId, info) => {
                     if (tabId !== issueTabId || info.status !== "complete") {

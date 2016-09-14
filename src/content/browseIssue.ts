@@ -1,7 +1,4 @@
 import * as options from "../lib/options";
-import * as stash from "../lib/stash";
-
-declare var AJS:any;
 
 chrome.runtime.onMessage.addListener( (msg, sender, response) => {
     if (!msg) {
@@ -28,18 +25,30 @@ chrome.runtime.onMessage.addListener( (msg, sender, response) => {
             }
             return;
         }
-        console.log(r);
-        /*
-        if (AJS.flag) {
-            AJS.flag({
-                type: "info",
-                title: "ブランチを作成しました。",
-                body: "hoge"
+        options.Options.get(chrome.storage.local).then(opts => {
+            const stashUrl = opts.stashUrl + (opts.stashUrl.substr(-1, 1) !== "/" ? "/" : "");
+            const title = "ブランチを作成しました";
+            const body = `
+                ブランチ <input class="text" style="padding:4px" type="text" value="${r.displayId}" onfocus="this.select()"> を作成しました。 
+                <a href="${stashUrl}projects/${opts.stashProject}/repos/${opts.stashRepository}/commits?until=${encodeURIComponent(r.id)}" target="_blank">Stash 上で確認</a>
+            `;
+            const div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.top = "20px";
+            div.style.left = "50%";
+            div.style.zIndex = "10";
+            div.innerHTML = `<div style="position:relative;left:-50%">
+                <div class="aui-message aui-message-info info closeable shadowed">
+                    <p class="title"><strong>${title}</strong></p>
+                    <p>${body}</p>
+                    <span class="aui-icon icon-close" role="button" tabindex="0"></span>
+                </div>
+            </div>`;
+            div.querySelector(".icon-close").addEventListener("click", () => {
+                document.body.removeChild(div);
             });
-        } else {
-            // ブランチつくった
-        }
-        */
-    });  
+            document.body.appendChild(div);
+        });
+    });
 });
 
