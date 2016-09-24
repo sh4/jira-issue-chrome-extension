@@ -1,9 +1,9 @@
 module.exports = {
     entry: {
-        main: __dirname + "/src/main.js",
-        options: __dirname + "/src/options.js",
-        contentBrowseIssue: __dirname + "/src/content/browseIssue.js",
-        contentCreateIssueForm: __dirname + "/src/content/createIssueForm.js",
+        main: __dirname + "/src/main.ts",
+        options: __dirname + "/src/options.ts",
+        contentBrowseIssue: __dirname + "/src/content/browseIssue.ts",
+        contentCreateIssueForm: __dirname + "/src/content/createIssueForm.ts",
     },
 
     output: {
@@ -11,16 +11,23 @@ module.exports = {
         path: __dirname + "/chrome"
     },
 
+    resolve: {
+        extensions: ["", ".ts", ".tsx", ".js"]
+    },
+
     module: {
         loaders: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: "babel-loader"
+                test: /\.tsx?$/,
+                include: /src/,
+                loaders: ["babel", "ts"]
             }
-        ]
+        ],
+
+        preLoaders: [
+            { test: /\.js$/, loader: "source-map-loader" }
+        ],
     },
 
-    //devtool: "source-map",
-
+    devtool: "source-map",
 };
