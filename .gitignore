@@ -1,6 +1,8 @@
 *.pem
+*.zip
 node_modules/
 typings/
 src/*.js
 src/*/*.js
 chrome/*.js
+chrome/*.js.map

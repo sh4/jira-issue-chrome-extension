@@ -11,20 +11,37 @@
         {
             "taskName": "watch",
             "args": [
-                "${env.APPDATA}\\npm\\tsc.cmd",
-                "-w"
+                "npm",
+                "run",
+                "watch"
             ],
             "isWatching": true,
             "suppressTaskName": true,
-            "problemMatcher": "$tsc"
+            "problemMatcher": {
+                "owner": "webpack",
+                "severity": "error",
+                "fileLocation": "relative",
+                "pattern": [
+                    {
+                        "regexp": "ERROR in (.*)",
+                        "file": 1
+                    },
+                    {
+                        "regexp": "\\((\\d+),(\\d+)\\):(.*)",
+                        "line": 1,
+                        "column": 2,
+                        "message": 3
+                    }
+                ]
+            }
         },
         {
             "taskName": "build",
             "isBuildCommand": true,
             "args": [
-                "${workspaceRoot}\\node_modules\\.bin\\crx.cmd",
-                "pack",
-                "${workspaceRoot}\\chrome"
+                "npm",
+                "run",
+                "build"
             ],
             "suppressTaskName": true
         }
