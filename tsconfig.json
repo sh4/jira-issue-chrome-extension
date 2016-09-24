@@ -9,6 +9,7 @@
         "typings/index.d.ts",
         "src/content/browseIssue.ts",
         "src/content/createIssueForm.ts",
+        "src/lib/restClient.ts",
         "src/lib/options.ts",
         "src/lib/jira.ts",
         "src/options.ts",

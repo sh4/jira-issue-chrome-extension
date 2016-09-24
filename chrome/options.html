@@ -9,7 +9,7 @@
     }
     label, textarea, input {
         display: block;
-        width: 100%;
+        width: 95%;
         margin: 0.5em;
     }
     fieldset > div + div {
@@ -20,6 +20,11 @@
         margin-right: 0.5em;
         font-weight: bold;
         color: red;
+    }
+    .error-item {
+        font-weight: bold;
+        color: #f40;
+        font-size: 95%;
     }
     </style>
 </head>
@@ -35,6 +40,7 @@
     <div>
         <label for="jiraUrl"><span class="required-item">*</span>JIRA URL</label>
         <input class="option-value" id="jiraUrl" type="text">
+        <div class="error-item" id="jiraUrl-error"></div>
     </div>
 
     <div>
@@ -45,6 +51,7 @@
     <div>
         <label for="stashUrl"><span class="required-item">*</span>Stash URL</label>
         <input class="option-value" id="stashUrl" type="text">
+        <div class="error-item" id="stashUrl-error"></div>
     </div>
 
     <div>
@@ -58,7 +65,7 @@
     </div>
 
     <div>
-        <label for="jiraIssueBranchName">Stash StartPoint Branch Name</label>
+        <label for="jiraIssueStartPointBranchName">Stash StartPoint Branch Name</label>
         <input class="option-value" id="jiraIssueStartPointBranchName" type="text">
     </div>
 </fieldset>
@@ -114,8 +121,8 @@
 </table>
 
 <p>
-    <button id="save">Save</button>
     <div id="status"></div>
+    <button id="save">Save</button>
 </p>
 
 <script src="options.js"></script>

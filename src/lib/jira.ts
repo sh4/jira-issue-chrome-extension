@@ -1,3 +1,5 @@
+import * as rest from "./restClient";
+
 export interface JIRAProject {
     assigneeType: string;
     components: {
@@ -50,34 +52,17 @@ export class JIRA {
 
     getProject(project:string): Promise<JIRAProject> {
         if (project === null) {
-            return new Promise((_, reject) => reject());
+            return new Promise((_, reject) => reject({
+                message: "プロジェクト名を入力してください"
+            }));
         }
         const projectUrl = `${this.url}rest/api/2/project/${project}`;
-        return fetch(projectUrl, { credentials: "include" })
-            .then(r => r.json())
-            .then(json => {
-                const err = json.errorMessages;
-                if (err && err.length > 0) {
-                    throw new Error(err.join("\n"));
-                }
-                return json;
-            })
-            .then(p => {
-                return <JIRAProject>p;
-            });
+        return new rest.Client("GET", projectUrl).send();
     }
 
     getMyself(): Promise<JIRAUser> {
-        return fetch(`${this.url}rest/api/2/myself`, { credentials: "include" })
-            .then(r => {
-                if (!r.ok) {
-                    throw new Error(r.statusText);
-                }
-                return r.json();
-            })
-            .then(json => {
-                return <JIRAUser>json;
-            });
+        const myselfUrl = `${this.url}rest/api/2/myself`;
+        return new rest.Client("GET", myselfUrl).send();
     }
 
     issueUrl(params?: { [key: string]: string }) {
@@ -89,5 +74,4 @@ export class JIRA {
         url += Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join("&");
         return url;
     }
-
 }

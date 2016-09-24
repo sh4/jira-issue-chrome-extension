@@ -14,10 +14,22 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         return;
     }
 
+    var shouldBeInputCorrectOptions = false;
+    const incompleteOptionError = (message) => {
+        shouldBeInputCorrectOptions = true;
+        throw new Error(message);
+    };
+
     options.Options
         .get(chrome.storage.local)
         .then(opts => {
-            const jiraAPI = new jira.JIRA(opts.jiraUrl); 
+            if (options.Options.isNullOrEmpty(opts.jiraUrl)) {
+                incompleteOptionError("JIRA URL is empty.");
+            }
+            if (options.Options.isNullOrEmpty(opts.jiraProject)) {
+                incompleteOptionError("JIRA Project name is empty.");
+            }
+            const jiraAPI = new jira.JIRA(opts.jiraUrl);
             // FIXME: 前回と異なる設定のときだけプロジェクトに関する設定を取得する
             return Promise.all([
                 jiraAPI.getProject(opts.jiraProject).then(p => {
@@ -25,16 +37,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                         options: opts,
                         api: jiraAPI, 
                         project: p,
+                        user: null,
                     };
                 }),
                 jiraAPI.getMyself(),
-            ]);
+            ]).then(r => {
+                var context = r[0];
+                const user = r[1];
+                context.user = user;
+                return context;
+            });
         })
-        .then(results => {
-            const r = results[0];
+        .then(r => {
             const opts = r.options;
-            const user = results[1];
-            
             const selectionText = info.selectionText || "";
             const macroVars: { [key: string]:string } = {
                 "SELECTED-TEXT": selectionText,
@@ -46,8 +61,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 issuetype: opts.jiraIssueType,
                 summary: summary,
                 description: description,
-                reporter: user.name,
-                assignee: user.name,
+                reporter: r.user.name,
+                assignee: r.user.name,
             });
             chrome.tabs.create({
                 url: issueUrl,
@@ -75,7 +90,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                         .createBranch(opts.stashProject, opts.stashRepository, branchName, startPointBranchName)
                         .then(r => {
                             res(r);
-                        }, err => {
+                        })
+                        .catch(err => {
                             res({ error: err });
                         });
                     return true;
@@ -106,6 +122,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             });
         })
         .catch((err:Error) => {
-            alert(`${err.message}`);
+            alert(`リクエスト中にエラーが発生: ${err.message}`);
+            if (shouldBeInputCorrectOptions) {
+                chrome.tabs.create({
+                    url: `chrome://extensions/?options=${chrome.runtime.id}`
+                });
+            }
         });
 });
