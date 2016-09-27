@@ -57,12 +57,12 @@ export class JIRA {
             }));
         }
         const projectUrl = `${this.url}rest/api/2/project/${project}`;
-        return new rest.Client("GET", projectUrl).send();
+        return rest.Client("GET", projectUrl);
     }
 
     getMyself(): Promise<JIRAUser> {
         const myselfUrl = `${this.url}rest/api/2/myself`;
-        return new rest.Client("GET", myselfUrl).send();
+        return rest.Client("GET", myselfUrl);
     }
 
     issueUrl(params?: { [key: string]: string }) {

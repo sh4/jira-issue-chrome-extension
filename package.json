@@ -17,7 +17,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "bulid": "webpack && node archive.js",
-    "watch": "webpack --display-error-details --colors --watch --progress"
+    "watch": "webpack --display-error-details --colors --watch --progress",
+    "typings": "typings"
   },
   "author": "sh4",
   "license": "MIT"

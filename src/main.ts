@@ -87,12 +87,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     }
                     const stashAPI = new stash.Stash(opts.stashUrl);
                     stashAPI
-                        .createBranch(opts.stashProject, opts.stashRepository, branchName, startPointBranchName)
+                        .createBranch(
+                            opts.stashProject, 
+                            opts.stashRepository, 
+                            branchName, 
+                            startPointBranchName)
                         .then(r => {
-                            res(r);
+                            return res({ options: opts, branch: r, error :null });
                         })
                         .catch(err => {
-                            res({ error: err });
+                            return res({ options: opts, branch: null, error: err });
                         });
                     return true;
                 };

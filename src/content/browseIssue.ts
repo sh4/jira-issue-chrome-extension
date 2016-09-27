@@ -1,5 +1,3 @@
-import * as options from "../lib/options";
-
 class Notification {
     static show(opts: {
         title: string,
@@ -41,8 +39,11 @@ chrome.runtime.onMessage.addListener( (msg, sender, response) => {
         sessionId: msg.sessionId,
         branchName: msg.branchName,
         jiraIssueKey: jiraIssueKey,
-    }, (r) => {
-        r || (r = {});
+    }, (r: {
+        options: any,
+        branch: any,
+        error: Error,
+    }) => {
         if (r.error) {
             Notification.show({
                 title: `ブランチ作成に失敗しました`,
@@ -51,15 +52,14 @@ chrome.runtime.onMessage.addListener( (msg, sender, response) => {
             });
             return;
         }
-        options.Options.get(chrome.storage.local).then(opts => {
-            const stashUrl = opts.stashUrl + (opts.stashUrl.substr(-1, 1) !== "/" ? "/" : "");
-            const branchUrl = `${stashUrl}projects/${opts.stashProject}/repos/${opts.stashRepository}/commits?until=${encodeURIComponent(r.id)}`;
-            const title = "ブランチを作成しました";
-            const body = `ブランチ
-                <input class="text" style="padding:4px" type="text" value="${r.displayId}" onfocus="this.select()">
-                を作成しました。 <a href="${branchUrl}" target="_blank">Stash 上で確認</a>`;
-            Notification.show({ title: title, body: body, kind: "info" });
-        });
+        const opts = r.options;
+        const branch = r.branch;
+        const stashUrl = opts.stashUrl + (opts.stashUrl.substr(-1, 1) !== "/" ? "/" : "");
+        const branchUrl = `${stashUrl}projects/${opts.stashProject}/repos/${opts.stashRepository}/commits?until=${encodeURIComponent(branch.id)}`;
+        const title = "ブランチを作成しました";
+        const body = `ブランチ
+            <input class="text" style="padding:4px" type="text" value="${branch.displayId}" onfocus="this.select()">
+            を作成しました。 <a href="${branchUrl}" target="_blank">Stash 上で確認</a>`;
+        Notification.show({ title: title, body: body, kind: "info" });
     });
 });
-

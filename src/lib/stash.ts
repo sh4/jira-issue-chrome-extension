@@ -1,7 +1,5 @@
 import * as rest from "./restClient";
 
-const IsFirefox = /firefox/i.test(navigator.userAgent);
-
 export interface StashRepository {
     slug: string;
     id: string;
@@ -46,40 +44,6 @@ export interface StashBranch {
     type: string; // BRANCH
 }
 
-class XHRHeaderRewriter {
-    handler: (details:any) => void;
-
-    constructor(handler: (details:any) => void) {
-        this.handler = handler;
-    }
-
-    static register(url: string, rewriteHeaders: [{ name: string, value: string }]) {
-        const refererChanger = (details) => {
-            const requestHeaders = details.requestHeaders || [];
-            rewriteHeaders.forEach(rewrite => {
-                if (!requestHeaders.some(h => {
-                    if (h.name === rewrite.name) {
-                        h.value = rewrite.value;
-                        return true;
-                    }
-                })) {
-                    requestHeaders.push(rewrite);
-                }
-            });
-            return { requestHeaders: requestHeaders };
-        };
-        chrome.webRequest.onBeforeSendHeaders.addListener(refererChanger, {
-            urls: [url],
-            types: ["xmlhttprequest"]
-        }, ["blocking", "requestHeaders"]);
-        return new XHRHeaderRewriter(refererChanger);
-    }
-
-    unregister() {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(this.handler);
-    }
-}
-
 export class Stash {
     url: string;
 
@@ -89,7 +53,7 @@ export class Stash {
 
     getRepository(project: string, repository: string): Promise<StashRepository | { message: string }> {
         const url = `${this.url}rest/api/1.0/projects/${project}/repos/${repository}`;
-        return new rest.Client("GET", url).send();
+        return rest.Client("GET", url);
     }
 
     createBranch(project: string, repository: string, branchName: string, startPoint: string): Promise<StashBranch | { message: string }> {
@@ -98,21 +62,7 @@ export class Stash {
             name: branchName,
             startPoint: `refs/heads/${startPoint}`,
         });
-        const requestPromise = new rest.Client("POST", branchesUrl).send(json);
-        if (IsFirefox) {
-            // Firefox の場合は Origin/Referer ヘッダともに付与されず、そのままだと XSRF Check Failed になるので、
-            // XHRリクエストをインターセプトして Referer ヘッダを注入する
-            const headerRewriter = XHRHeaderRewriter.register(
-                branchesUrl, 
-                [{ name: "Referer", value: this.url }]);
-            const always = x => {
-                headerRewriter.unregister();
-                return x;
-            };
-            return requestPromise.then(always).catch(always);
-        } else {
-            return requestPromise;
-        }
+        return rest.Client("POST", branchesUrl, json);
     }
 
 }

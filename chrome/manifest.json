@@ -28,13 +28,11 @@
     "content_scripts": [
         {
             "matches": ["http://*/jira/browse/*"],
-            "js": ["contentBrowseIssue.js"],
-            "run_at": "document_start"
+            "js": ["contentBrowseIssue.js"]
         },
         {
             "matches": ["http://*/jira/secure/CreateIssueDetails*"],
-            "js": ["contentCreateIssueForm.js"],
-            "run_at": "document_start"
+            "js": ["contentCreateIssueForm.js"]
         }
     ],    
     "options_ui": {
