@@ -3,7 +3,7 @@
     "name": "JIRA issue helper",
     "short_name": "JIRA issue helper",
     "description": "Shortcut for creating an issue of JIRA",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "icons": {
         "48": "icons/jira.png",
         "96": "icons/jira@2x.png",
